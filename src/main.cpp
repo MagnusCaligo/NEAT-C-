@@ -221,15 +221,14 @@ int main(){
     gene->outputNeuronIDs = &outputs;
     net2genome.push_back(gene);
 
-    for(int i = 0; i < net1genome.size(); i++){
-        printf("Each one is %d\n", net1genome.at(i)->sourceNeuronID);
-    }
+    int p = 5;
+
+    printf("Test: %d, %d\n", net2genome.at(p)->innovationNumber, net2genome.at(p)->enabled);
 
     vector<Gene*>* result = breedNetworks(&net1genome, &net2genome); 
-    printf("Size: %d\n", result->size());
     for(int i = 0; i < result->size(); i++){
         Gene * gene = result->at(i);
-        printf("Inno: %d, From %d, To %d\n", gene->innovationNumber, gene->sourceNeuronID, gene->destinationNeuronID);
+        printf("Inno: %d, From %d, To %d, weight %f, enabled %d\n", gene->innovationNumber, gene->sourceNeuronID, gene->destinationNeuronID, gene->weightValue, gene->enabled);
     }
 
 

@@ -5,6 +5,7 @@
 #include "network.h"
 #include "genetics.h"
 #include <climits>
+#include <stdlib.h>
 
 using namespace std;
 

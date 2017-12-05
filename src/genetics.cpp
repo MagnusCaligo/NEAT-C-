@@ -2,9 +2,6 @@
 
 using namespace std;
 
-//Gene::Gene(const Gene& cop){
-    
-//}
 
 vector<Gene*> convertNetworkToGenes(Network *net){
     vector<Gene *> outputGenes; 

@@ -8,13 +8,14 @@ CXXFLAGS := -std=c++11
 SRC = $(wildcard $(SRCDIR)/*.cpp)
 OBJ = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-.PHONY: main $(OBJ)
+.PHONY:  main 
 
 main : $(OBJ)
 	$(CC) $^  -I $(INCDIR) -o $@ $(CFLAGS) 
 
-$(OBJ) : 
-	$(CC) $(SRCDIR)/$(basename $(notdir $@)).cpp -I $(INCDIR) -o $@ $< $(CFLAGS) -c
+$(OBJ) : $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+	$(info value is $<)
+	$(CC) $(SRCDIR)/$(basename $(notdir $@)).cpp -I $(INCDIR) -o $@  $(CFLAGS) -c
 
 clean:
 	rm $(OBJ) main

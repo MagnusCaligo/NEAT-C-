@@ -16,7 +16,6 @@ typedef struct Gene{
     vector<int>* inputNeuronIDs;
     vector<int>* outputNeuronIDs;
 
-    //Gene(const Gene& cop);
 } Gene;
 
 vector<Gene*> convertNetworkToGenes(Network *net);
