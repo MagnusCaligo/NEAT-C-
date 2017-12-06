@@ -178,11 +178,27 @@ void run(){
 
     int p = 5;
 
-    printf("Test: %d, %d\n", net2genome.at(p)->innovationNumber, net2genome.at(p)->enabled);
 
     vector<Gene*>* result = breedNetworks(&net1genome, &net2genome); 
-    for(int i = 0; i < result->size(); i++){
-        Gene * gene = result->at(i);
+
+    Network* net = convertGenesToNetwork(*(result));
+    vector<Gene*> netToGenes = convertNetworkToGenes(net);
+
+
+    vector<float> in = {
+        1, 2,3
+    };
+
+    net->inputs = in;
+    net->update();
+    vector<float> out = net->outputs;
+
+    for(int i = 0; i < out.size(); i++){
+        printf("%f\n", out.at(i));
+    }
+
+    for(int i = 0; i < netToGenes.size(); i++){
+        Gene * gene = netToGenes.at(i);
         printf("Inno: %d, From %d, To %d, weight %f, enabled %d\n", gene->innovationNumber, gene->sourceNeuronID, gene->destinationNeuronID, gene->weightValue, gene->enabled);
     }
 }

@@ -87,7 +87,7 @@ vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2){
     }
     
     while(largerGenePoolGene != NULL){
-        Gene * output = (Gene *) malloc(1 * sizeof(largerGenePoolGene));
+        Gene * output = new Gene;
         copyGene(output, largerGenePoolGene);
         //memcpy(output, largerGenePoolGene, sizeof(largerGenePoolGene));
         outputNet->push_back(output);
@@ -95,7 +95,7 @@ vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2){
         largerGenePoolGene = getNextLargestInnovation(largerGenePool, innovation);
     }
 
-    addMutations(outputNet);
+    addMutations(*(outputNet));
     return outputNet;
 }
 
@@ -112,52 +112,50 @@ Gene* getNextLargestInnovation(vector<Gene*>* net, int currentInnovation){
     return currentGene;
 }
 
-void addMutations(vector<Gene*>* genome){
+void addMutations(vector<Gene*> &genome){
     default_random_engine generator;
     normal_distribution<double> distribution(1.0, .15);
-    for(int i = 0; i < genome->size(); i++){
+    for(int i = 0; i < genome.size(); i++){
        double multiplyer = distribution(generator);
-       genome->at(i)->weightValue *= multiplyer;
+       genome.at(i)->weightValue *= multiplyer;
     }
-    printf("Another Test\n");
     if(((double) rand() / RAND_MAX) <= STRUCTURAL_MUTATION_CHANCE || true){
-        printf("What\n");
         vector<int> nodeIDs;
-        int src;
-        int dst;
-        for(int i = 0; i < genome->size(); i++){
-            src = genome->at(i)->sourceNeuronID;
-            dst = genome->at(i)->destinationNeuronID;
+        for(int i = 0; i < genome.size(); i++){
+            int src = genome.at(i)->sourceNeuronID;
+            int dst = genome.at(i)->destinationNeuronID;
             if(find(nodeIDs.begin(), nodeIDs.end(), src) == nodeIDs.end()){
-                printf("God\n");
                 nodeIDs.push_back(src);
-                printf("Damn it\n");
             } 
-            printf("Got here again\n");
             if(find(nodeIDs.begin(), nodeIDs.end(), dst) == nodeIDs.end()){
                 nodeIDs.push_back(dst);
             } 
-            printf("Did you get here\n");
 
         }
-        printf("Test\n");
-        if(((double) rand() / RAND_MAX) <= ADD_CONNECTION_MUTATION_CHANCE){
-            
-            printf("Here\n");
-        }else{
-            printf("Made it here\n");
-            int sourceNode;
-            int destinationNode;
-            int attempts = 0;
-            for(;;){
-                attempts++;
-                sourceNode = (nodeIDs.at(((double) rand() / (RAND_MAX)) * nodeIDs.size()));
-                destinationNode = (nodeIDs.at(((double) rand() / (RAND_MAX)) * nodeIDs.size()));
-                if(sourceNode == destinationNode)
-                    continue;
-                printf("Source: %d Destion: %d\n", sourceNode, destinationNode);
-                break;
+        int sourceNode;
+        int destinationNode;
+        int attempts = 0;
+        while(attempts < MAX_MUTATION_ATTEMPTS){
+            attempts++;
+            sourceNode = (nodeIDs.at(((double) rand() / (RAND_MAX)) * nodeIDs.size()));
+            destinationNode = (nodeIDs.at(((double) rand() / (RAND_MAX)) * nodeIDs.size()));
+            if(sourceNode == destinationNode)
+                continue;
+            printf("Source: %d Destion: %d\n", sourceNode, destinationNode);
+            bool alreadyContains = false;
+            for(int i = 0; i < genome.size(); i++){
+                if(genome.at(i)->sourceNeuronID == sourceNode && genome.at(i)->destinationNeuronID == destinationNode){
+                    alreadyContains = true;
+                    break;
+                } 
             }
+            if(alreadyContains)
+                continue;
+            break;
+        }
+        if(((double) rand() / RAND_MAX) <= ADD_CONNECTION_MUTATION_CHANCE){
+            Gene* gene = new Gene;
+        }else{
         }
     }
 }

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "network.h"
+#include "NEAT.h"
 #include <algorithm>
 
 using namespace std;
@@ -13,6 +14,7 @@ typedef struct Gene{
     float weightValue;
     int innovationNumber;
     bool enabled;
+    int type = GENE_TYPE_NORMAL;
     vector<int>* inputNeuronIDs;
     vector<int>* outputNeuronIDs;
 

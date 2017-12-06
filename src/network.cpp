@@ -12,7 +12,7 @@ void AxonNeuronPair::setNeuron(Neuron *ner){
 }
 
 float AxonNeuronPair::getValue(){
-    return (neuron->getValue() * weight * enabled);
+    return (float)(neuron->getValue() * weight * enabled);
 }
 
 Neuron::Neuron(int i){
@@ -29,7 +29,7 @@ float Neuron::getValue(){
     if(type == 0){
         return result;
     }else if(type == 1){
-        for(int i = 0; i < inputs.size(); i++){
+        for(int i = 0; i < (int) inputs.size(); i++){
             input += inputs.at(i)->getValue();
         }
         return input;
@@ -50,7 +50,7 @@ void Network::update(){
         return;
     }
     outputs.clear();
-    for(int i = 0; i < outputNeurons.size(); i++){
+    for(int i = 0; i < (int) outputNeurons.size(); i++){
        outputs.push_back(outputNeurons.at(i)->getValue()); 
     }
 }
