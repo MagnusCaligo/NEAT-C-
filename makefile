@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++11 -I. 
+CFLAGS = -std=c++17 -I. 
 OBJDIR = ./obj
 SRCDIR = ./src
 INCDIR = ./include
@@ -9,6 +9,8 @@ SRC = $(wildcard $(SRCDIR)/*.cpp)
 OBJ = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 .PHONY:  main 
+
+all: clean main
 
 main : $(OBJ)
 	$(CC) $^  -I $(INCDIR) -o $@ $(CFLAGS) 

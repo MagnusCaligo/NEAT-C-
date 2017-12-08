@@ -5,14 +5,15 @@
 #include "genetics.h"
 #include <stdlib.h>
 #include <time.h>
+#include <tuple>
+#include "evolution.h"
+#include <unistd.h>
 
+#define WEIGHT_CHANGE_MUTATION_CHANCE 0.1
 #define STRUCTURAL_MUTATION_CHANCE 0.1
-#define ADD_CONNECTION_MUTATION_CHANCE 0.5
+#define ADD_CONNECTION_MUTATION_CHANCE .9
 #define MAX_MUTATION_ATTEMPTS 10000
 
-#define GENE_TYPE_NORMAL 0
-#define GENE_TYPE_INPUT 1
-#define GENE_TYPE_OUTPUT 2
 
 using namespace std;
 
@@ -20,5 +21,25 @@ static int innovationNumber;
 void initNeat();
 int getNextInnovation();
 
+class NEAT{
+    public:
+        int addOrganism();
+        vector<float> inputOrganismNetworkInputs(int organismID, vector<float> inputs);
+        void inputOrganismFitness(int id, float input);
+        void nextEpoch();
+        NEAT(int in, int out);
+        Network* getBestNetwork();
+    
 
+    private:
+        int numOfOrganisms= 0;
+        int numOfNetworkInputs = -1;
+        int numOfNetworkOutputs = -1;
+        vector<Network*> networks;
+        vector<tuple<int, float>> idAndFitness; 
+
+        Network* findNetwork(int i);
+
+
+};
 #endif

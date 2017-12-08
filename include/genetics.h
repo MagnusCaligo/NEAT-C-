@@ -3,8 +3,11 @@
 #include <iostream>
 #include <vector>
 #include "network.h"
-#include "NEAT.h"
 #include <algorithm>
+
+#define GENE_TYPE_NORMAL 0
+#define GENE_TYPE_INPUT 1
+#define GENE_TYPE_OUTPUT 2
 
 using namespace std;
 
@@ -15,13 +18,13 @@ typedef struct Gene{
     int innovationNumber;
     bool enabled;
     int type = GENE_TYPE_NORMAL;
-    vector<int>* inputNeuronIDs;
-    vector<int>* outputNeuronIDs;
+    Gene();
+    Gene(int type, int sourceNeuron);
 
 } Gene;
 
 vector<Gene*> convertNetworkToGenes(Network *net);
-vector<Gene*> walkThroughTree(Neuron * ner); 
-Network * convertGenesToNetwork(vector<Gene *> genes);
+vector<Gene*> walkThroughTree(Neuron * ner, vector<int>& currentlyCalculating); 
+Network * convertGenesToNetwork(int networkID, vector<Gene *> genes);
 
 #endif

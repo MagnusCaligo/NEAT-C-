@@ -2,6 +2,7 @@
 #define NETWORK_H
 #include <vector>
 #include <math.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -16,7 +17,7 @@ typedef struct AxonNeuronPair{
     bool enabled;
 
     //Functions
-    float getValue();
+    float getValue(vector<int>& beingCalcualted);
     AxonNeuronPair();
     void setNeuron(Neuron *ner);
 
@@ -34,7 +35,7 @@ typedef struct Neuron{
 
     //Functions
     Neuron(int i);
-    float getValue();
+    float getValue(vector<int>& beingCalculated);
 
 }Neuron;
 

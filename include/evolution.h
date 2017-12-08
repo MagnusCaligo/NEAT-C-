@@ -2,9 +2,9 @@
 #define EVOLUTION_U
 #include <iostream>
 #include <vector>
-#include "network.h"
+#include "NEAT.h"
 #include "genetics.h"
-//#include "NEAT.h"
+#include "network.h"
 #include <climits>
 #include <stdlib.h>
 #include <random>

@@ -3,6 +3,7 @@
 #include "genetics.h"
 #include "evolution.h"
 #include "debug.h"
+#include "NEAT.h"
 #include <stdlib.h>
 
 using namespace std;
@@ -15,8 +16,58 @@ int main(){
     //
 
       initNeat();
-      printf("Random: %f\n", (double) rand() / RAND_MAX);
-      run();
+//      run();
+
+      NEAT neat(3,1);
+      int size = 300;
+
+      vector<int> orgs;
+      for(int i = 0; i < size; i++){
+          orgs.push_back(neat.addOrganism());
+      }
+
+      vector<vector<float>> possibleInputs;
+      
+      possibleInputs.push_back(vector<float> {0, 0, 1});
+      possibleInputs.push_back(vector<float> {0, 1, 1});
+      possibleInputs.push_back(vector<float> {1, 0, 1});
+      possibleInputs.push_back(vector<float> {1, 1, 1});
+
+      for(;;){
+          float avgFitness = 0;
+          float maxFitness = 0;
+          
+          for(int i = 0; i < size; i++){
+              float fitness = 0;
+              for(int m = 0; m < possibleInputs.size(); m++){
+                  vector<float> inputs = possibleInputs.at(m);
+                  vector<float>output = neat.inputOrganismNetworkInputs(orgs[i], inputs);
+                  int correctOutput =(int) (inputs[0]) ^ (int)(inputs[1]);
+                  float valM = 3*(-2*pow(output[0],6) + 3*pow(output[0],4) -1);
+                  float valX = 1/(1 + pow(valM, 2));
+                  fitness += valX;
+                  //fitness += (-2 * pow(output[0], 4)) + (2 *pow(output[0], 2) -1);
+                  //fitness += -1 * pow(output[0]-correctOutput,2) + 1;
+              }
+              if(fitness > maxFitness){
+                  maxFitness = fitness;
+              }
+              avgFitness += fitness;
+              neat.inputOrganismFitness(orgs[i], fitness);
+          }
+          avgFitness /= 300;
+          printf("Average was %f, max was %f\n", avgFitness, maxFitness);
+
+          if(maxFitness > 3.9){
+              printf("Breaking...\n");
+              Network* bestNet = neat.getBestNetwork();
+              printf("Best Net ID: %d, Neurons %d, Connections %d\n", bestNet->ID, bestNet->allNeurons.size(), bestNet->hiddenLayerNeurons.size());
+              break;
+          }
+          neat.nextEpoch();
+
+      }
+
 
 //    Neuron input1(1);
 //    Neuron input2(2);
