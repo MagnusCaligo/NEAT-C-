@@ -39,11 +39,24 @@ float Neuron::getValue(vector<int>& beingCalculated){
             for(int i = 0; i < (int) inputs.size(); i++){
                 input += inputs.at(i)->getValue(beingCalculated);
             }
-            input = 1/(exp(-input) + 1);
+            input = (1/(exp(-input) + 1)) -.5;
             //printf("Final result is %f\n", input);
+            //input *= 5;
             result = input;
             beingCalculated.erase(remove(beingCalculated.begin(), beingCalculated.end(), ID), beingCalculated.end());
             return input;
+        }else if(type == 2){
+            beingCalculated.push_back(ID);
+            printf("Amount of inputs is %d\n", inputs.size());
+            for(int i = 0; i < (int) inputs.size(); i++){
+                input += inputs.at(i)->getValue(beingCalculated);
+            }
+            //input = (1/(exp(-input) + 1)) -.5;
+            //printf("Final result is %f\n", input);
+            //result = input * 5;
+            result = input;
+            beingCalculated.erase(remove(beingCalculated.begin(), beingCalculated.end(), ID), beingCalculated.end());
+            return result;
         }
     }else{
         return result;

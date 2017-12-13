@@ -12,6 +12,7 @@ typedef struct AxonNeuronPair AxonNeuronPair;
 typedef struct AxonNeuronPair{
     //Variables
     Neuron * neuron;
+    Neuron * destNeuron;
     float weight;
     int innovationNumber;
     bool enabled;

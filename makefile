@@ -10,7 +10,7 @@ OBJ = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 .PHONY:  main 
 
-all: clean main
+#all: clean main
 
 main : $(OBJ)
 	$(CC) $^  -I $(INCDIR) -o $@ $(CFLAGS) 

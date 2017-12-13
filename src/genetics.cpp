@@ -24,10 +24,21 @@ Gene::Gene(){
 vector<Gene*> convertNetworkToGenes(Network *net){
     vector<Gene *> outputGenes; 
     vector<int> currentlyCalculating;
-    for(Neuron *outputNeuron : net->outputNeurons){
-        vector<Gene *> genes = walkThroughTree(outputNeuron, currentlyCalculating);
-        outputGenes.insert(outputGenes.end(), genes.begin(), genes.end());
+    for(AxonNeuronPair* pair : net->hiddenLayerNeurons){
+//        printf("making new pair, source ID %d, destination ID %d\n", pair->neuron->ID, pair->destNeuron->ID);
+//        printf("Before Converting %d, %d\n", pair->neuron->ID, pair->destNeuron->ID);
+        Gene *gene = new Gene;
+        gene->sourceNeuronID = pair->neuron->ID;
+        gene->destinationNeuronID = pair->destNeuron->ID;
+        gene->innovationNumber = pair->innovationNumber;
+        gene->enabled = pair->enabled;
+        gene->weightValue = pair->weight;
+        outputGenes.push_back(gene);
     }
+//    for(Neuron *outputNeuron : net->outputNeurons){
+//        vector<Gene *> genes = walkThroughTree(outputNeuron, currentlyCalculating);
+//        outputGenes.insert(outputGenes.end(), genes.begin(), genes.end());
+//    }
     for(Neuron *ner : net->inputNeurons){
         Gene* gene = new Gene();
         gene->sourceNeuronID = ner->ID;
@@ -87,6 +98,8 @@ Network * convertGenesToNetwork(int networkID, vector<Gene*> genes){
             int sourceID = gene->sourceNeuronID;
             int destID = gene->destinationNeuronID;
 
+            //printf("Converting: %d, %d\n", sourceID, destID);
+
             Neuron *sourceNeuron = NULL;
             Neuron *destNeuron = NULL;
 
@@ -111,6 +124,7 @@ Network * convertGenesToNetwork(int networkID, vector<Gene*> genes){
             pair->enabled = gene->enabled;
             pair->innovationNumber = gene->innovationNumber;
             destNeuron->inputs.push_back(pair);
+            pair->destNeuron = destNeuron;
             network->hiddenLayerNeurons.push_back(pair);
         }else if(gene->type == GENE_TYPE_INPUT){
            bool alreadyExists = false;
@@ -143,6 +157,7 @@ Network * convertGenesToNetwork(int networkID, vector<Gene*> genes){
                neuron = new Neuron(gene->sourceNeuronID);
                allNeurons->push_back(neuron);
            }
+           neuron->type = 2;
            network->outputNeurons.push_back(neuron);
         }
     }

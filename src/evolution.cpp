@@ -74,27 +74,21 @@ vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2){
             net2Innovation = net2Gene->innovationNumber;
         }
     }
-    vector<Gene*>* largerGenePool = new vector<Gene*>();
+    vector<Gene*>* largerGenePool;
     Gene* largerGenePoolGene = NULL;
     int innovation;
-    int net1HighestIno = 0;
-    int net2HighestIno = 0;
-    for(int i = 0; i < net1->size();i++){
-        if(net1->at(i)->innovationNumber > net1HighestIno)
-            net1HighestIno = net1->at(i)->innovationNumber;
-    }
-    for(int i = 0; i < net2->size();i++){
-        if(net2->at(i)->innovationNumber > net2HighestIno)
-            net2HighestIno = net2->at(i)->innovationNumber;
-    }
-    if(net1HighestIno > net2HighestIno){
+    if(net2Gene == NULL && net1Gene != NULL){
+        //printf("Getting extra gene from parent1\n");
         largerGenePool = net1;
         largerGenePoolGene = net1Gene;
         innovation = net1Gene->innovationNumber;
-    }else if(net1HighestIno < net2HighestIno){
+    }else if(net1Gene == NULL && net2Gene != NULL){
+        //printf("Getting extra gene from parent2\n");
         largerGenePool = net2;
         largerGenePoolGene = net2Gene;
         innovation = net2Gene->innovationNumber;
+    }else{
+        //printf("No extra genes to get\n");
     }
     while(largerGenePoolGene != NULL){
         Gene * output = new Gene;
@@ -138,6 +132,7 @@ void addMutations(vector<Gene*> &genome){
         for(int i = 0; i < genome.size(); i++){
             int src = genome.at(i)->sourceNeuronID;
             int dst = genome.at(i)->destinationNeuronID;
+            //printf("Network contains nodes %d, %d\n", src, dst);
             if(find(nodeIDs.begin(), nodeIDs.end(), src) == nodeIDs.end()){
                 nodeIDs.push_back(src);
             } 
@@ -196,7 +191,7 @@ void addMutations(vector<Gene*> &genome){
          //       printf("Failed to mutate, ran out of attempts, Add_Node\n");
                 return;
             }
-            int nextNode;
+            int nextNode = 0;
             for(int i = 0; i < nodeIDs.size();i++){
                 if(nodeIDs.at(i) >= nextNode){
                     nextNode = nodeIDs.at(i);
@@ -215,6 +210,13 @@ void addMutations(vector<Gene*> &genome){
             newGene = new Gene;
             newGene->sourceNeuronID = geneToModify->sourceNeuronID;
             newGene->destinationNeuronID = nextNode;
+            //printf("Mutation: Nodes are %d, %d, %d\n", nextNode, geneToModify->sourceNeuronID, geneToModify->destinationNeuronID);
+//            for(int i = 0; i < genome.size(); i++){
+//                Gene* gene = genome.at(i);
+//                printf("Gene inno %d, from %d, to %d\n", gene->innovationNumber, gene->sourceNeuronID, gene->destinationNeuronID);
+//            }
+            int i;
+//            cin >> i;
             newGene->weightValue = geneToModify->weightValue;
             newGene->innovationNumber = getNextInnovation();
             newGene->enabled = true;

@@ -9,17 +9,10 @@
 using namespace std;
 
 int main(){
-    //TODO 
-    //1. Make a rng in NEAT.cpp to be used by all of NEAT
-    //2. Speciation
-    //3. Add different node types (sigmoid, add, diff, etc.)
-    //
-
       initNeat();
-//      run();
 
       NEAT neat(3,1);
-      int size = 300;
+      int size = 500;
 
       vector<int> orgs;
       for(int i = 0; i < size; i++){
@@ -33,40 +26,77 @@ int main(){
       possibleInputs.push_back(vector<float> {1, 0, 1});
       possibleInputs.push_back(vector<float> {1, 1, 1});
 
+      Network* bestNet;
+
       for(;;){
           float avgFitness = 0;
-          float maxFitness = 0;
+          float maxFitness = -10;
           
+          vector<int> bestOrder;
           for(int i = 0; i < size; i++){
               float fitness = 0;
+              vector<int> order;
+              printf("Starting Network\n");
               for(int m = 0; m < possibleInputs.size(); m++){
-                  vector<float> inputs = possibleInputs.at(m);
+                  int value = m;
+                  order.push_back(value);
+                  vector<float> inputs = possibleInputs.at(value);
                   vector<float>output = neat.inputOrganismNetworkInputs(orgs[i], inputs);
-                  int correctOutput =(int) (inputs[0]) ^ (int)(inputs[1]);
-                  float valM = 3*(-2*pow(output[0],6) + 3*pow(output[0],4) -1);
-                  float valX = 1/(1 + pow(valM, 2));
-                  fitness += valX;
-                  //fitness += (-2 * pow(output[0], 4)) + (2 *pow(output[0], 2) -1);
-                  //fitness += -1 * pow(output[0]-correctOutput,2) + 1;
+                  int correctOutput =(int)(inputs[0]) ^ (int)(inputs[1]);
+                  //int correctOutput = !inputs[0];
+                  if(correctOutput == 0){
+                      correctOutput = -1;
+                  }
+                  fitness += pow((float)correctOutput - output[0], 2);
+                  printf("Correct Output %d, Network Output %f, fitness give %f\n", correctOutput, output[0], fitness);
               }
+              cout << endl;
+              fitness = 1 - fitness;
               if(fitness > maxFitness){
                   maxFitness = fitness;
+                  bestOrder = order;
               }
               avgFitness += fitness;
               neat.inputOrganismFitness(orgs[i], fitness);
           }
-          avgFitness /= 300;
+          avgFitness /= size;
           printf("Average was %f, max was %f\n", avgFitness, maxFitness);
 
-          if(maxFitness > 3.9){
+          if(maxFitness > .1){
               printf("Breaking...\n");
-              Network* bestNet = neat.getBestNetwork();
+              bestNet = neat.getBestNetwork();
               printf("Best Net ID: %d, Neurons %d, Connections %d\n", bestNet->ID, bestNet->allNeurons.size(), bestNet->hiddenLayerNeurons.size());
+              for(int i = 0; i < bestOrder.size(); i++){
+                  //printf("Order %d\n", bestOrder.at(i));
+              }
               break;
           }
+          //printf("Getting Next Epoch\n");
+          int i;
+          //cin >> i;
           neat.nextEpoch();
-
       }
+
+      for(;;){
+          float input1;
+          float input2;
+          cin >> input1;
+          cin >> input2;
+
+//          vector<float> inputs = {
+//              input1, 1
+//          };
+          vector<float> inputs = {
+              input1, input2, 1
+          };
+
+          bestNet->inputs = inputs;
+          bestNet->update();
+          vector<float> output = bestNet->outputs;
+          cout << output[0] << endl;
+      }
+
+}
 
 
 //    Neuron input1(1);
@@ -136,4 +166,3 @@ int main(){
     //    free(genes.at(i));
     //}
 
-}
