@@ -1,19 +1,15 @@
 #include "evolution.h"
 #include <cstring>
+#include "NEAT.h"
 
 using namespace std;
 
-vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2){
+vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2, bool net1HigherFitness){
     vector<Gene*>* outputNet = new vector<Gene*>();
 
 
     Gene* net1Gene = getNextLargestInnovation(net1, -1);
     Gene* net2Gene = getNextLargestInnovation(net2, -1);
-
-
-    //int net1Innovation = net1Gene->innovationNumber;
-    //int net2Innovation = net2Gene->innovationNumber;
-
 
     for(Gene * gene : *(net1)){
         if(gene->innovationNumber == -1){
@@ -28,7 +24,7 @@ vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2){
         int net1Innovation = net1Gene->innovationNumber;
         int net2Innovation = net2Gene->innovationNumber;
         output = new Gene;
-        //output = (Gene *) malloc(1 * sizeof(Gene));
+
         if(net1Innovation == net2Innovation){
             double val = (double) rand() / (RAND_MAX);
             if(val > .5){
@@ -54,8 +50,9 @@ vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2){
         }
         else if(net1Innovation > net2Innovation){
             copyGene(output, net2Gene);
-            //memcpy(output, net2Gene, sizeof(net2Gene));
-            outputNet->push_back(output);
+            if(!net1HigherFitness){
+                outputNet->push_back(output);
+            }
             net2Gene = getNextLargestInnovation(net2, net2Gene->innovationNumber);
             if(net1Gene == NULL || net2Gene == NULL){
                 break;
@@ -65,7 +62,9 @@ vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2){
         }
         else if(net1Innovation < net2Innovation){
             copyGene(output, net1Gene);
-            outputNet->push_back(output);
+            if(net1HigherFitness){
+                outputNet->push_back(output);
+            }
             net1Gene = getNextLargestInnovation(net1, net1Gene->innovationNumber);
             if(net1Gene == NULL || net2Gene == NULL){
                 break;
@@ -77,16 +76,18 @@ vector<Gene *>* breedNetworks(vector<Gene*>* net1, vector<Gene*>* net2){
     vector<Gene*>* largerGenePool;
     Gene* largerGenePoolGene = NULL;
     int innovation;
-    if(net2Gene == NULL && net1Gene != NULL){
+    if(net1HigherFitness){
         //printf("Getting extra gene from parent1\n");
         largerGenePool = net1;
         largerGenePoolGene = net1Gene;
-        innovation = net1Gene->innovationNumber;
-    }else if(net1Gene == NULL && net2Gene != NULL){
+        if(net1Gene != NULL)
+            innovation = net1Gene->innovationNumber;
+    }else if(!net1HigherFitness){
         //printf("Getting extra gene from parent2\n");
         largerGenePool = net2;
         largerGenePoolGene = net2Gene;
-        innovation = net2Gene->innovationNumber;
+        if(net2Gene != NULL)
+            innovation = net2Gene->innovationNumber;
     }else{
         //printf("No extra genes to get\n");
     }

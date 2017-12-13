@@ -143,7 +143,10 @@ void NEAT::nextEpoch(){
            Gene* gene = genome2.at(i);
            //printf("Parent 2: Innovations %d, from %d, to %d\n", gene->innovationNumber, gene->sourceNeuronID, gene->destinationNeuronID);
        }
-       vector<Gene *>* childGenome = breedNetworks(&genome1, &genome2);
+
+       bool net1HigherFitness = getFitnessOfNetwork(parent1->ID) > getFitnessOfNetwork(parent2->ID);
+
+       vector<Gene *>* childGenome = breedNetworks(&genome1, &genome2, net1HigherFitness);
        Network* net = convertGenesToNetwork(newNetworks.size(), *(childGenome));
        free(childGenome);
        if(fitness1 > -3 || fitness2 > -3){
@@ -167,4 +170,13 @@ Network* NEAT::getBestNetwork(){
            });
 
    return findNetwork(get<0>(idAndFitness.at(0)));
+}
+
+float NEAT::getFitnessOfNetwork(int id){
+    for(int i = 0; i < idAndFitness.size(); i++){
+        if(get<0>(idAndFitness.at(i)) == id){
+            return get<1>(idAndFitness.at(i));
+        }
+    }
+    return -1;
 }

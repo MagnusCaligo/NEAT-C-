@@ -12,7 +12,7 @@
 
 using namespace std;
 
-vector<Gene*>* breedNetworks(vector<Gene*>* net1genome, vector<Gene*>* net2genome);
+vector<Gene*>* breedNetworks(vector<Gene*>* net1genome, vector<Gene*>* net2genome, bool net1HigherFitness);
 void addMutations(vector<Gene*>& genome);
 Gene* getNextLargestInnovation(vector<Gene*>* network, int currentInnovation);
 void copyGene(Gene* dest, Gene* src);

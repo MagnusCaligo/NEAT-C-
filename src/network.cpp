@@ -47,7 +47,7 @@ float Neuron::getValue(vector<int>& beingCalculated){
             return input;
         }else if(type == 2){
             beingCalculated.push_back(ID);
-            printf("Amount of inputs is %d\n", inputs.size());
+            //printf("Amount of inputs is %d\n", inputs.size());
             for(int i = 0; i < (int) inputs.size(); i++){
                 input += inputs.at(i)->getValue(beingCalculated);
             }

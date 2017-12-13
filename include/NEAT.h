@@ -9,9 +9,9 @@
 #include "evolution.h"
 #include <unistd.h>
 
-#define WEIGHT_CHANGE_MUTATION_CHANCE 0.5
+#define WEIGHT_CHANGE_MUTATION_CHANCE 0.9
 #define STRUCTURAL_MUTATION_CHANCE 0.01
-#define ADD_CONNECTION_MUTATION_CHANCE .6
+#define ADD_CONNECTION_MUTATION_CHANCE .5
 #define MAX_MUTATION_ATTEMPTS 10000
 
 
@@ -29,6 +29,7 @@ class NEAT{
         void nextEpoch();
         NEAT(int in, int out);
         Network* getBestNetwork();
+        float getFitnessOfNetwork(int id);
     
 
     private:

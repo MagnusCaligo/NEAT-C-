@@ -2,17 +2,20 @@
 #include "network.h"
 #include "genetics.h"
 #include "evolution.h"
-#include "debug.h"
 #include "NEAT.h"
 #include <stdlib.h>
+#include "not.h"
 
 using namespace std;
 
 int main(){
+
+    runNot();
+
       initNeat();
 
       NEAT neat(3,1);
-      int size = 500;
+      int size = 10000;
 
       vector<int> orgs;
       for(int i = 0; i < size; i++){
@@ -36,7 +39,7 @@ int main(){
           for(int i = 0; i < size; i++){
               float fitness = 0;
               vector<int> order;
-              printf("Starting Network\n");
+              //printf("Starting Network\n");
               for(int m = 0; m < possibleInputs.size(); m++){
                   int value = m;
                   order.push_back(value);
@@ -48,9 +51,9 @@ int main(){
                       correctOutput = -1;
                   }
                   fitness += pow((float)correctOutput - output[0], 2);
-                  printf("Correct Output %d, Network Output %f, fitness give %f\n", correctOutput, output[0], fitness);
+                  //printf("Correct Output %d, Network Output %f, fitness give %f\n", correctOutput, output[0], fitness);
               }
-              cout << endl;
+              //cout << endl;
               fitness = 1 - fitness;
               if(fitness > maxFitness){
                   maxFitness = fitness;
