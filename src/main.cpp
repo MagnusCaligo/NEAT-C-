@@ -10,12 +10,12 @@ using namespace std;
 
 int main(){
 
-    runNot();
+   runNot();
 
       initNeat();
 
       NEAT neat(3,1);
-      int size = 10000;
+      int size = 100;
 
       vector<int> orgs;
       for(int i = 0; i < size; i++){
@@ -28,33 +28,47 @@ int main(){
       possibleInputs.push_back(vector<float> {0, 1, 1});
       possibleInputs.push_back(vector<float> {1, 0, 1});
       possibleInputs.push_back(vector<float> {1, 1, 1});
+      possibleInputs.push_back(vector<float> {0, 0, 1});
+      possibleInputs.push_back(vector<float> {0, 1, 1});
+      possibleInputs.push_back(vector<float> {1, 0, 1});
+      possibleInputs.push_back(vector<float> {1, 1, 1});
+      possibleInputs.push_back(vector<float> {0, 0, 1});
+      possibleInputs.push_back(vector<float> {0, 1, 1});
+      possibleInputs.push_back(vector<float> {1, 0, 1});
+      possibleInputs.push_back(vector<float> {1, 1, 1});
 
       Network* bestNet;
 
       for(;;){
           float avgFitness = 0;
-          float maxFitness = -10;
+          float maxFitness = -99999;
           
           vector<int> bestOrder;
           for(int i = 0; i < size; i++){
               float fitness = 0;
               vector<int> order;
-              //printf("Starting Network\n");
-              for(int m = 0; m < possibleInputs.size(); m++){
-                  int value = m;
+              int inputsCompleted[possibleInputs.size()] = { 0 };
+              int sum = 0;
+              while(sum != possibleInputs.size()){
+                  int value = (int)((double) rand() / RAND_MAX * possibleInputs.size());
+                  if(inputsCompleted[value] == 1)
+                      continue;
+                  //value = sum;
+                  inputsCompleted[value] = 1;
                   order.push_back(value);
                   vector<float> inputs = possibleInputs.at(value);
                   vector<float>output = neat.inputOrganismNetworkInputs(orgs[i], inputs);
-                  int correctOutput =(int)(inputs[0]) ^ (int)(inputs[1]);
-                  //int correctOutput = !inputs[0];
+                  int correctOutput = (int)inputs[0] ^ (int)inputs[1];
                   if(correctOutput == 0){
-                      correctOutput = -1;
+                      //correctOutput = -1;
                   }
-                  fitness += pow((float)correctOutput - output[0], 2);
-                  //printf("Correct Output %d, Network Output %f, fitness give %f\n", correctOutput, output[0], fitness);
+                  fitness += 1- pow((float)correctOutput - output[0], 2);
+                  sum = 0;
+                  for(int i : inputsCompleted){
+                      sum += i;
+                  }
               }
-              //cout << endl;
-              fitness = 1 - fitness;
+              //fitness = 1 - fitness;
               if(fitness > maxFitness){
                   maxFitness = fitness;
                   bestOrder = order;
@@ -65,13 +79,10 @@ int main(){
           avgFitness /= size;
           printf("Average was %f, max was %f\n", avgFitness, maxFitness);
 
-          if(maxFitness > .1){
+          if(maxFitness > (possibleInputs.size() -1) + .5){
               printf("Breaking...\n");
               bestNet = neat.getBestNetwork();
               printf("Best Net ID: %d, Neurons %d, Connections %d\n", bestNet->ID, bestNet->allNeurons.size(), bestNet->hiddenLayerNeurons.size());
-              for(int i = 0; i < bestOrder.size(); i++){
-                  //printf("Order %d\n", bestOrder.at(i));
-              }
               break;
           }
           //printf("Getting Next Epoch\n");

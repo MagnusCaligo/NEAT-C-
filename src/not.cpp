@@ -10,7 +10,7 @@ void runNot(){
       initNeat();
 
       NEAT neat(2,1);
-      int size = 100;
+      int size = 1000;
 
       vector<int> orgs;
       for(int i = 0; i < size; i++){
@@ -19,6 +19,10 @@ void runNot(){
 
       vector<vector<float>> possibleInputs;
       
+      possibleInputs.push_back(vector<float> {0, 1});
+      possibleInputs.push_back(vector<float> {1, 1});
+      possibleInputs.push_back(vector<float> {0, 1});
+      possibleInputs.push_back(vector<float> {1, 1});
       possibleInputs.push_back(vector<float> {0, 1});
       possibleInputs.push_back(vector<float> {1, 1});
 
@@ -32,17 +36,22 @@ void runNot(){
           for(int i = 0; i < size; i++){
               float fitness = 0;
               vector<int> order;
-              for(int p = 0; p < 1; p++){
-                  for(int m = 0; m < possibleInputs.size(); m++){
-                      int value = m;
-                      order.push_back(value);
-                      vector<float> inputs = possibleInputs.at(value);
-                      vector<float>output = neat.inputOrganismNetworkInputs(orgs[i], inputs);
-                      int correctOutput = !inputs[0];
-                      if(correctOutput == 0){
-                          //correctOutput = -1;
-                      }
-                      fitness += pow((float)correctOutput - output[0], 2);
+              int inputsCompleted[possibleInputs.size()];
+              int sum = 0;
+              while(sum != possibleInputs.size()){
+                  int value = (int)((double) rand() / RAND_MAX * possibleInputs.size());
+                  inputsCompleted[value] = 1;
+                  order.push_back(value);
+                  vector<float> inputs = possibleInputs.at(value);
+                  vector<float>output = neat.inputOrganismNetworkInputs(orgs[i], inputs);
+                  int correctOutput = !inputs[0];
+                  if(correctOutput == 0){
+                      //correctOutput = -1;
+                  }
+                  fitness += pow((float)correctOutput - output[0], 2);
+                  sum = 0;
+                  for(int i : inputsCompleted){
+                      sum += i;
                   }
               }
               fitness = 1 - fitness;

@@ -77,27 +77,33 @@ void NEAT::inputOrganismFitness(int id, float fit){
 void NEAT::nextEpoch(){
    vector<Network*> newNetworks;
    int newSize = numOfOrganisms/2;
-   //newSize = 3;
+   //newSize = 5;
    sort(idAndFitness.begin(), idAndFitness.end(), [] (const tuple<int, float>& a, const tuple<int,float>&b){
            return get<1>(a) > get<1>(b);
            });
- // for(int i = 0; i < idAndFitness.size(); i++){
- //      printf("Organism %d, fitness %f\n", get<0>(idAndFitness.at(i)),get<1>(idAndFitness.at(i)));
- //  }
-   Network net = *(networks.at(0));
-   float fitness = 0;
+   Network *net = getBestNetwork();
+   float fitness = get<1>(idAndFitness.at(0));
+   if(haveBestNetwork == false || fitness > bestFitness){
+       printf("Got a new best network!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+       bestGenome = convertNetworkToGenes(net);
+       bestFitness = fitness;
+       haveBestNetwork = true;
+   } 
+   networks.at(newSize - 2) = convertGenesToNetwork(networks.at(newSize-2)->ID, bestGenome); 
    for(int i = 0; i < idAndFitness.size(); i++){
-       if(get<0>(idAndFitness.at(i)) == net.ID){
-           fitness = get<1>(idAndFitness.at(i));
+       if(get<0>(idAndFitness.at(i)) == networks.at(newSize-2)->ID){
+           get<1>(idAndFitness.at(i)) = bestFitness;
            break;
        }
    }
-   printf("Network with hightest fitness %d, value was %f\n", net.ID, fitness);
+   printf("Network with hightest fitness %d, value was %f\n", net->ID, fitness);
+
    while(newNetworks.size() < numOfOrganisms){ 
        int value1 = ((double) rand() /RAND_MAX) * newSize;
        int value2 = ((double) rand() /RAND_MAX) * newSize;
        Network* parent1 = networks.at(value1);
        Network* parent2 = networks.at(value2);
+       //printf("Breeding: Parents have structure (%d, %d) and (%d, %d)\n", parent1->allNeurons.size(), parent1->hiddenLayerNeurons.size(), parent2->allNeurons.size(), parent2->hiddenLayerNeurons.size());
        float fitness1 = 0;
        float fitness2 = 0;
        for(int i = 0; i < idAndFitness.size(); i++){
@@ -135,25 +141,13 @@ void NEAT::nextEpoch(){
        //cin >> val;
        vector<Gene *> genome1 = convertNetworkToGenes(parent1);
        vector<Gene *> genome2 = convertNetworkToGenes(parent2);
-       for(int i = 0; i < genome1.size(); i++){
-           Gene* gene = genome1.at(i);
-           //printf("Parent 1: Innovations %d, from %d, to %d\n", gene->innovationNumber, gene->sourceNeuronID, gene->destinationNeuronID);
-       }
-       for(int i = 0; i < genome2.size(); i++){
-           Gene* gene = genome2.at(i);
-           //printf("Parent 2: Innovations %d, from %d, to %d\n", gene->innovationNumber, gene->sourceNeuronID, gene->destinationNeuronID);
-       }
 
        bool net1HigherFitness = getFitnessOfNetwork(parent1->ID) > getFitnessOfNetwork(parent2->ID);
 
        vector<Gene *>* childGenome = breedNetworks(&genome1, &genome2, net1HigherFitness);
        Network* net = convertGenesToNetwork(newNetworks.size(), *(childGenome));
+       //printf("Child has structure (%d, %d)\n", net->allNeurons.size(), net->hiddenLayerNeurons.size());
        free(childGenome);
-       if(fitness1 > -3 || fitness2 > -3){
-           //printf("Child has %d nodes, %d connections\n", net->allNeurons.size(), net->hiddenLayerNeurons.size());
-            int val;
-            //cin >> val;
-       }
 
        newNetworks.push_back(net);
    } 

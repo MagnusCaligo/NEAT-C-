@@ -9,8 +9,8 @@
 #include "evolution.h"
 #include <unistd.h>
 
-#define WEIGHT_CHANGE_MUTATION_CHANCE 0.9
-#define STRUCTURAL_MUTATION_CHANCE 0.01
+#define WEIGHT_CHANGE_MUTATION_CHANCE 0.5
+#define STRUCTURAL_MUTATION_CHANCE 0.5
 #define ADD_CONNECTION_MUTATION_CHANCE .5
 #define MAX_MUTATION_ATTEMPTS 10000
 
@@ -36,6 +36,9 @@ class NEAT{
         int numOfOrganisms= 0;
         int numOfNetworkInputs = -1;
         int numOfNetworkOutputs = -1;
+        float bestFitness;
+        bool haveBestNetwork = false;
+        vector<Gene*> bestGenome;
         vector<Network*> networks;
         vector<tuple<int, float>> idAndFitness; 
 
